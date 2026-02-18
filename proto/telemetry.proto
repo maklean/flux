@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package flux;
+
+option go_package = "github.com/maklean/flux/proto";
+
+// Messages
+message TelemetryRequest {
+    string encoder_id = 1;
+    double bitrate_mbps = 2;
+    double temperature = 3; // in degrees celsius
+    uint32 dropped_frames = 4;
+    uint64 timestamp = 5; // unix
+}
+
+message TelemetryResponse {
+    bool status_received = 1;
+    string error_message = 2;
+}
+
+// Services
+service TelemetryService {
+    rpc RecordMetrics(TelemetryRequest) returns (TelemetryResponse);
+}
