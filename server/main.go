@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"sync"
 
 	"github.com/joho/godotenv"
 	"github.com/maklean/flux/server/api"
@@ -10,16 +9,15 @@ import (
 )
 
 func init() {
+	// load env variables
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("failed to load env: %s", err.Error())
 	}
 }
 
 func main() {
-	var wg sync.WaitGroup
+	go api.StartAPIServer()
+	go server_interface.StartgRPCServer()
 
-	wg.Go(api.StartAPIServer)
-	wg.Go(server_interface.StartgRPCServer)
-
-	wg.Wait()
+	select {}
 }
