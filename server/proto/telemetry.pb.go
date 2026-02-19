@@ -99,11 +99,11 @@ func (x *TelemetryRequest) GetTimestamp() uint64 {
 }
 
 type TelemetryResponse struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	StatusReceived bool                   `protobuf:"varint,1,opt,name=status_received,json=statusReceived,proto3" json:"status_received,omitempty"`
-	ErrorMessage   string                 `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Successful    bool                   `protobuf:"varint,1,opt,name=successful,proto3" json:"successful,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *TelemetryResponse) Reset() {
@@ -136,16 +136,16 @@ func (*TelemetryResponse) Descriptor() ([]byte, []int) {
 	return file_proto_telemetry_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *TelemetryResponse) GetStatusReceived() bool {
+func (x *TelemetryResponse) GetSuccessful() bool {
 	if x != nil {
-		return x.StatusReceived
+		return x.Successful
 	}
 	return false
 }
 
-func (x *TelemetryResponse) GetErrorMessage() string {
+func (x *TelemetryResponse) GetMessage() string {
 	if x != nil {
-		return x.ErrorMessage
+		return x.Message
 	}
 	return ""
 }
@@ -161,10 +161,12 @@ const file_proto_telemetry_proto_rawDesc = "" +
 	"\fbitrate_mbps\x18\x02 \x01(\x01R\vbitrateMbps\x12 \n" +
 	"\vtemperature\x18\x03 \x01(\x01R\vtemperature\x12%\n" +
 	"\x0edropped_frames\x18\x04 \x01(\rR\rdroppedFrames\x12\x1c\n" +
-	"\ttimestamp\x18\x05 \x01(\x04R\ttimestamp\"a\n" +
-	"\x11TelemetryResponse\x12'\n" +
-	"\x0fstatus_received\x18\x01 \x01(\bR\x0estatusReceived\x12#\n" +
-	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage2T\n" +
+	"\ttimestamp\x18\x05 \x01(\x04R\ttimestamp\"M\n" +
+	"\x11TelemetryResponse\x12\x1e\n" +
+	"\n" +
+	"successful\x18\x01 \x01(\bR\n" +
+	"successful\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2T\n" +
 	"\x10TelemetryService\x12@\n" +
 	"\rRecordMetrics\x12\x16.flux.TelemetryRequest\x1a\x17.flux.TelemetryResponseB\x1fZ\x1dgithub.com/maklean/flux/protob\x06proto3"
 

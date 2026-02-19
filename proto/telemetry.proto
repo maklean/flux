@@ -14,11 +14,12 @@ message TelemetryRequest {
 }
 
 message TelemetryResponse {
-    bool status_received = 1;
-    string error_message = 2;
+    bool successful = 1;
+    string message = 2;
 }
 
 // Services
 service TelemetryService {
+    // RecordMetrics processes a TelemetryRequest and returns a TelemetryResponse
     rpc RecordMetrics(TelemetryRequest) returns (TelemetryResponse);
 }

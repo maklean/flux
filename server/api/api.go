@@ -1,0 +1,39 @@
+package api
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
+
+// StartAPIServer starts a REST API server at port API_SERVER_PORT
+func StartAPIServer() {
+	r := gin.Default()
+
+	// Register routes
+	main := r.Group("/api")
+
+	main.GET("/", helloWorld)
+
+	if err := r.Run(fmt.Sprintf(":%d", getPort())); err != nil {
+		log.Fatalf("failed to start api server")
+	}
+}
+
+// getPort returns the API_SERVER_PORT value from the environment files
+func getPort() int {
+	portStr, ok := os.LookupEnv("API_SERVER_PORT")
+	if !ok {
+		log.Fatalf("failed finding API_SERVER_PORT in env")
+	}
+
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		log.Fatalf("failed to convert port to int")
+	}
+
+	return port
+}

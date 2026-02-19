@@ -2,21 +2,24 @@ package main
 
 import (
 	"log"
-	"net/http"
+	"sync"
 
-	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"github.com/maklean/flux/server/api"
+	"github.com/maklean/flux/server/server_interface"
 )
 
-func main() {
-	r := gin.Default()
-
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello, World!",
-		})
-	})
-
-	if err := r.Run(); err != nil {
-		log.Fatalf("failed to run server: %v", err)
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("failed to load env: %s", err.Error())
 	}
+}
+
+func main() {
+	var wg sync.WaitGroup
+
+	wg.Go(api.StartAPIServer)
+	wg.Go(server_interface.StartgRPCServer)
+
+	wg.Wait()
 }
