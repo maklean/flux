@@ -18,7 +18,13 @@ func StartAPIServer() {
 
 	main.GET("/", helloWorld)
 
-	if err := r.Run(fmt.Sprintf(":%d", getPort())); err != nil {
+	port := getPort()
+
+	if gin.Mode() == gin.ReleaseMode {
+		log.Printf("Running API Server on port %d...", port)
+	}
+
+	if err := r.Run(fmt.Sprintf(":%d", port)); err != nil {
 		log.Fatalf("failed to start api server")
 	}
 }
