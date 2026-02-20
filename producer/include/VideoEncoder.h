@@ -20,7 +20,7 @@ private:
     double m_bitrate;
     double m_temperature;
     uint32_t m_dropped_frames;
-    std::mutex mtx;
+    std::mutex m_mtx;
     bool m_running{ false };
 
 public:
@@ -31,7 +31,7 @@ public:
 
     void run_simulation() {
         {
-            std::lock_guard<std::mutex> lock(mtx);
+            std::lock_guard<std::mutex> lock(m_mtx);
 
             if(m_running) {
                 return;
@@ -49,7 +49,7 @@ public:
         while(true) {
             {
                 // lock mutex before updating
-                std::lock_guard<std::mutex> lock(mtx);
+                std::lock_guard<std::mutex> lock(m_mtx);
 
                 m_bitrate += distribution(generator); // should simulate bitrate fluctuation
                 m_temperature += (m_bitrate > s_bitrate_temp_inc_threshold) ? 0.05 : -0.02;
@@ -64,7 +64,7 @@ public:
     }
 
     std::optional<flux::TelemetryRequest> fetch_metrics() {
-        std::lock_guard<std::mutex> lock(mtx);
+        std::lock_guard<std::mutex> lock(m_mtx);
 
         if(!m_running) {
             return std::nullopt;
