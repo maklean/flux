@@ -1,2 +1,18 @@
+# Environment files
 .env
+
+# Auto-gen protobuf code
 server/proto
+producer/proto
+
+# IDE
+.vscode
+
+# CMake & Makefiles
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+
+# Executables
+producer/flux_producer
