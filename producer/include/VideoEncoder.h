@@ -38,6 +38,8 @@ public:
     {
     }
 
+    const std::string& getId() const { return m_id; }
+
     // run_simulation() starts the VideoEncoder simulation
     void run_simulation();
 

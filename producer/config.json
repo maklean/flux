@@ -1,4 +1,5 @@
 {
+    "serverAddress": "localhost:9000",
     "encoders": [
         {
             "id": "ENC-PROD-01",
