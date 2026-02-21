@@ -20,7 +20,7 @@ func StartgRPCServer() {
 		log.Fatalf("failed to listen on tcp port 9000: %v\n", err)
 	}
 
-	// start new gRPC server and register server for network requests
+	// start new gRPC server and register service for network requests
 	grpcServer := grpc.NewServer()
 	pb.RegisterTelemetryServiceServer(grpcServer, &telemetryService{})
 
