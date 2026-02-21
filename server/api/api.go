@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -11,13 +12,20 @@ import (
 
 // StartAPIServer starts a REST API server at port API_SERVER_PORT
 func StartAPIServer() {
+	// Connect to database
+	conn := connectDatabase()
+	defer conn.Close(context.Background())
+
+	log.Println("Connected to database successfully...")
+
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
 	// Register routes
 	main := r.Group("/api")
-
 	main.GET("/", helloWorld)
 
+	// Run API server
 	port := getPort()
 
 	if gin.Mode() == gin.ReleaseMode {
