@@ -11,8 +11,15 @@
 
 using json = nlohmann::json;
 
+const int telemetry_loop_delay = 5;
+
+// Loads the .json config at 'path' and returns the json instance.
 json loadConfig(const std::string& path);
+
+// Creates a vector of shared_ptrs to VideoEncoder from the config.
 std::vector<std::shared_ptr<VideoEncoder>> createEncoders(const json& config);
+
+// Runs the telemetry loop that records the metrics of each VideoEncoder every 'telemetry_loop_delay' seconds.
 void runTelemetryLoop(const std::vector<std::shared_ptr<VideoEncoder>>& encoders, flux::TelemetryService::Stub& c_stub);
 
 int main()
@@ -105,6 +112,6 @@ void runTelemetryLoop(const std::vector<std::shared_ptr<VideoEncoder>>& encoders
             std::cout << "LOG - VideoEncoder(id=" << enc->getId() << "): " << msg << '\n';
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds(telemetry_loop_delay));
     }
 }
