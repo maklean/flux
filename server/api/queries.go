@@ -16,5 +16,5 @@ const (
 		encoder_id VARCHAR(255) NOT NULL REFERENCES encoders(id)
 	);`
 
-	idx_EncoderId_MetricsTable = "CREATE INDEX idx_metrics_encoder_id ON metrics(encoder_id);"
+	idx_EncoderId_MetricsTable = "CREATE INDEX IF NOT EXISTS idx_metrics_encoder_id ON metrics(encoder_id);"
 )

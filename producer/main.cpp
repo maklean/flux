@@ -11,13 +11,41 @@
 
 using json = nlohmann::json;
 
+json loadConfig(const std::string& path);
+std::vector<std::shared_ptr<VideoEncoder>> createEncoders(const json& config);
+void runTelemetryLoop(const std::vector<std::shared_ptr<VideoEncoder>>& encoders, flux::TelemetryService::Stub& c_stub);
+
 int main()
 {
-    std::vector<std::shared_ptr<VideoEncoder>> encoders;
+    try {
+        json config = loadConfig("config.json");
+        auto encoders = createEncoders(config);
+        
+        // establish TCP connection with server & create client stub
+        auto channel = grpc::CreateChannel(config["serverAddress"].get<std::string>(), grpc::InsecureChannelCredentials());
+        auto c_stub = flux::TelemetryService::NewStub(channel);
 
-    // load encoders from config
-    std::ifstream f("config.json");
-    json config = json::parse(f);
+        runTelemetryLoop(encoders, *c_stub);
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return EXIT_FAILURE;
+    }
+    
+    return 0;
+}
+
+json loadConfig(const std::string& path) {
+    std::ifstream f(path);
+
+    if(!f) {
+        throw std::runtime_error("Failed to open config file.");
+    }
+
+    return json::parse(f);
+}
+
+std::vector<std::shared_ptr<VideoEncoder>> createEncoders(const json& config) {
+    std::vector<std::shared_ptr<VideoEncoder>> encoders;
 
     for (const auto &enc : config["encoders"])
     {
@@ -31,17 +59,15 @@ int main()
         encoders.push_back(ve);
 
         // start simulation for video encoder
-        std::thread ve_thread([ve]()
-                              { ve->run_simulation(); });
+        std::thread ve_thread([ve](){ ve->run_simulation(); });
 
         ve_thread.detach();
     }
 
-    // establish TCP connection with server & create client stub
-    auto channel = grpc::CreateChannel(config["serverAddress"].get<std::string>(), grpc::InsecureChannelCredentials());
-    std::unique_ptr<flux::TelemetryService::Stub> c_stub = flux::TelemetryService::NewStub(channel);
+    return encoders;
+}
 
-    // send requests for each encoder
+void runTelemetryLoop(const std::vector<std::shared_ptr<VideoEncoder>>& encoders, flux::TelemetryService::Stub& c_stub) {
     while (true)
     {
         for (const auto &enc : encoders)
@@ -58,7 +84,7 @@ int main()
             grpc::ClientContext ctx;
             flux::TelemetryResponse res;
 
-            grpc::Status status = c_stub->RecordMetrics(&ctx, *reqOpt, &res);
+            grpc::Status status = c_stub.RecordMetrics(&ctx, *reqOpt, &res);
 
             // Failed to send request to server
             if (!status.ok())
@@ -81,6 +107,4 @@ int main()
 
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
-    
-    return 0;
 }
