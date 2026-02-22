@@ -18,6 +18,7 @@ func connectDatabase() *pgx.Conn {
 
 	var err error
 
+	// TODO: probably don't use context.Background(), make global app context for DB queries.
 	dbConn, err = pgx.Connect(context.Background(), getDatabaseURL())
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
