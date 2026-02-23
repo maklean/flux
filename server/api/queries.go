@@ -17,4 +17,22 @@ const (
 	);`
 
 	idx_EncoderId_MetricsTable = "CREATE INDEX IF NOT EXISTS idx_metrics_encoder_id ON metrics(encoder_id);"
+
+	SelectFromEncodersTable = "SELECT * FROM encoders WHERE id = $1;"
+	InsertIntoEncodersTable = "INSERT INTO encoders(id) VALUES($1);"
+
+	InsertIntoMetricsTable = `
+	INSERT INTO metrics(
+		bitrate_mbps, 
+		temperature, 
+		dropped_frames, 
+		timestamp, 
+		encoder_id
+	) VALUES(
+		$1,
+		$2,
+		$3,
+		$4,
+		$5
+	);`
 )

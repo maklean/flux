@@ -22,7 +22,7 @@ private:
     double m_failure_bitrate_threshold;
     double m_failure_bitrate_probability;
 
-    uint32_t m_dropped_frames;
+    uint32_t m_dropped_frames{};
     std::mutex m_mtx;
     bool m_running{false};
 

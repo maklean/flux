@@ -43,8 +43,12 @@ func connectDatabase() *pgx.Conn {
 	return dbConn
 }
 
-// getDB pings the database and returns the connection instance if it's still alive.
-func getDB() *pgx.Conn {
+// GetDB pings the database and returns the connection instance if it's still alive.
+func GetDB() *pgx.Conn {
+	if dbConn == nil {
+		log.Fatalf("database is not initialized")
+	}
+
 	if err := dbConn.Ping(context.Background()); err != nil {
 		log.Fatalf("loss connection to the database: %v", err)
 	}

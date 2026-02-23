@@ -9,42 +9,6 @@
             "failure_bitrate_probability": 0.15,
             "bitrate_temperature_incr_threshold": 16.5,
             "thread_sleep_duration_secs": 1
-        },
-        {
-            "id": "ENC-REMOTE-02",
-            "base_bitrate": 4.5,
-            "base_temperature": 38.0,
-            "failure_bitrate_threshold": 6.2,
-            "failure_bitrate_probability": 0.35,
-            "bitrate_temperature_incr_threshold": 5.5,
-            "thread_sleep_duration_secs": 2
-        },
-        {
-            "id": "ENC-TEST-03",
-            "base_bitrate": 8.0,
-            "base_temperature": 55.2,
-            "failure_bitrate_threshold": 8.5,
-            "failure_bitrate_probability": 0.60,
-            "bitrate_temperature_incr_threshold": 7.0,
-            "thread_sleep_duration_secs": 1
-        },
-        {
-            "id": "ENC-BACKUP-04",
-            "base_bitrate": 5.0,
-            "base_temperature": 40.0,
-            "failure_bitrate_threshold": 9.0,
-            "failure_bitrate_probability": 0.05,
-            "bitrate_temperature_incr_threshold": 7.5,
-            "thread_sleep_duration_secs": 5
-        },
-        {
-            "id": "ENC-LEGACY-05",
-            "base_bitrate": 3.2,
-            "base_temperature": 62.1,
-            "failure_bitrate_threshold": 4.0,
-            "failure_bitrate_probability": 0.80,
-            "bitrate_temperature_incr_threshold": 3.5,
-            "thread_sleep_duration_secs": 1
         }
     ]
 }

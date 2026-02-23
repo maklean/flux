@@ -2,7 +2,12 @@ package server_interface
 
 import (
 	"context"
+	"errors"
+	"log"
+	"time"
 
+	"github.com/jackc/pgx/v5"
+	"github.com/maklean/flux/server/api"
 	pb "github.com/maklean/flux/server/proto"
 )
 
@@ -12,7 +17,32 @@ type telemetryService struct {
 
 // RecordMetrics stores the metrics in the given request in the database
 func (telemetryService) RecordMetrics(ctx context.Context, tr *pb.TelemetryRequest) (*pb.TelemetryResponse, error) {
-	// TODO: store metrics in database
+	dbConn := api.GetDB()
+
+	// insert into encoders table if needed
+	var encoderId string
+	err := dbConn.QueryRow(context.Background(), api.SelectFromEncodersTable, tr.EncoderId).Scan(&encoderId)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			_, err = dbConn.Exec(context.Background(), api.InsertIntoEncodersTable, tr.EncoderId)
+
+			if err != nil {
+				log.Fatalf("failed to insert into encoders table: %v", err)
+			}
+		} else {
+			log.Fatalf("failed to query row: %v", err)
+		}
+	}
+
+	// insert metric into metrics table
+	timestamp := time.Unix(int64(tr.Timestamp), 0) // need to convert to insert a value with a type of TIMESTAMP on the db
+
+	_, err = dbConn.Exec(context.Background(), api.InsertIntoMetricsTable, tr.BitrateMbps, tr.Temperature, tr.DroppedFrames, timestamp, tr.EncoderId)
+
+	if err != nil {
+		log.Fatalf("failed to insert into metrics table: %v", err)
+	}
 
 	return &pb.TelemetryResponse{
 		Successful: true,
