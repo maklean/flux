@@ -22,7 +22,7 @@ func StartAPIServer() {
 
 	// Register routes
 	main := r.Group("/api")
-	main.GET("/", helloWorld)
+	main.GET("/metrics", getAllMetrics)
 
 	// Run API server
 	port := getPort()

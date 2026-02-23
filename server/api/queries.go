@@ -21,7 +21,8 @@ const (
 	SelectFromEncodersTable = "SELECT * FROM encoders WHERE id = $1;"
 	InsertIntoEncodersTable = "INSERT INTO encoders(id) VALUES($1);"
 
-	InsertIntoMetricsTable = `
+	selectAllFromMetricsTable = "SELECT * FROM metrics;"
+	InsertIntoMetricsTable    = `
 	INSERT INTO metrics(
 		bitrate_mbps, 
 		temperature, 
