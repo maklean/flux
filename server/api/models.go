@@ -10,3 +10,7 @@ type Metric struct {
 	Timestamp     time.Time
 	EncoderId     string
 }
+
+type Encoder struct {
+	Id string
+}

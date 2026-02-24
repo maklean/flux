@@ -18,8 +18,9 @@ const (
 
 	idx_EncoderId_MetricsTable = "CREATE INDEX IF NOT EXISTS idx_metrics_encoder_id ON metrics(encoder_id);"
 
-	SelectFromEncodersTable = "SELECT * FROM encoders WHERE id = $1;"
-	InsertIntoEncodersTable = "INSERT INTO encoders(id) VALUES($1);"
+	selectAllFromEncodersTable = "SELECT * FROM encoders;"
+	SelectFromEncodersTable    = "SELECT * FROM encoders WHERE id = $1;"
+	InsertIntoEncodersTable    = "INSERT INTO encoders(id) VALUES($1);"
 
 	selectAllFromMetricsTable = "SELECT * FROM metrics;"
 	InsertIntoMetricsTable    = `

@@ -28,3 +28,23 @@ func getAllMetrics(c *gin.Context) {
 		"metrics": metrics,
 	})
 }
+
+func getEncoders(c *gin.Context) {
+	dbConn := GetDB()
+
+	encoderRows, err := dbConn.Query(context.Background(), selectAllFromEncodersTable)
+	if err != nil {
+		panic("failed")
+	}
+
+	defer encoderRows.Close()
+
+	encoders, err := pgx.CollectRows(encoderRows, pgx.RowToStructByPos[Encoder])
+	if err != nil {
+		panic("failed")
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"encoders": encoders,
+	})
+}
