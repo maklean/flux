@@ -22,8 +22,9 @@ func StartAPIServer() {
 
 	// Register routes
 	main := r.Group("/api")
+
 	main.GET("/metrics", getAllMetrics)
-	main.GET("/encoders", getEncoders)
+	main.GET("/encoders", getAllEncoders)
 
 	// Run API server
 	port := getPort()
