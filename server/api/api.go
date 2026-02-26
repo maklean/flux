@@ -24,6 +24,8 @@ func StartAPIServer() {
 	main := r.Group("/api")
 
 	main.GET("/metrics", getAllMetrics)
+	main.GET("/metrics/:encoderId", getAllEncoderMetrics)
+
 	main.GET("/encoders", getAllEncoders)
 
 	// Run API server

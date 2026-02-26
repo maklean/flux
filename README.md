@@ -51,6 +51,7 @@ make
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/metrics` | Returns all stored telemetry metrics |
+| GET | `/api/encoders` | Returns all stored encoders |
 
 ## Todo
 
