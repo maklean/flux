@@ -51,11 +51,12 @@ make
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/metrics` | Returns all stored telemetry metrics |
+| GET | `/api/metrics/:encoderId` | Returns all stored telemetry metrics for a specific encoder |
 | GET | `/api/encoders` | Returns all stored encoders |
 
 ## Todo
 
-- [ ] Add `GET /api/metrics/:encoder_id` to query metrics by encoder
+- [X] Add `GET /api/metrics/:encoder_id` to query metrics by encoder
 - [X] Add `GET /api/encoders` to list all registered encoders
 - [ ] Switch from a single `pgx.Conn` to a connection pool (`pgxpool`) for concurrent access
 - [ ] Add a dashboard to visualize live encoder metrics (might have to switch to websockets for this)
