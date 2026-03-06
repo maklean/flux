@@ -58,5 +58,5 @@ make
 
 - [X] Add `GET /api/metrics/:encoder_id` to query metrics by encoder
 - [X] Add `GET /api/encoders` to list all registered encoders
-- [ ] Switch from a single `pgx.Conn` to a connection pool (`pgxpool`) for concurrent access
+- [X] Switch from a single `pgx.Conn` to a connection pool (`pgxpool.Pool`) for concurrent access
 - [ ] Add a dashboard to visualize live encoder metrics (might have to switch to websockets for this)

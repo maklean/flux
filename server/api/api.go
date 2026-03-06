@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -14,7 +13,8 @@ import (
 func StartAPIServer() {
 	// Connect to database
 	conn := connectDatabase()
-	defer conn.Close(context.Background())
+	defer conn.Close()
+
 	log.Println("Connected to database successfully...")
 
 	gin.SetMode(gin.ReleaseMode)

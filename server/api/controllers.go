@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -16,16 +15,20 @@ func getAllMetrics(c *gin.Context) {
 	dbConn := GetDB()
 
 	// retrieve all metric rows
-	metricRows, err := dbConn.Query(context.Background(), selectAllFromMetricsTable)
+	metricRows, err := dbConn.Query(c.Request.Context(), selectAllFromMetricsTable)
 	if err != nil {
-		log.Fatalf("failed to select all from metrics table: %v", err)
+		log.Printf("failed to select all from metrics table: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
 	}
 	defer metricRows.Close()
 
 	// collect all metrics into slice of Metric
 	metrics, err := pgx.CollectRows(metricRows, pgx.RowToStructByPos[Metric])
 	if err != nil {
-		log.Fatalf("failed to collect metrics into rows: %v", err)
+		log.Printf("failed to collect metrics into rows: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -35,13 +38,14 @@ func getAllMetrics(c *gin.Context) {
 
 // getAllEncoderMetrics returns all metrics from the 'metrics' table with a specific encoder_id.
 func getAllEncoderMetrics(c *gin.Context) {
+	ctx := c.Request.Context()
 	encoderId := c.Param("encoderId")
 
 	dbConn := GetDB()
 
 	// check if encoder exists
 	var dbEncoderId string
-	err := dbConn.QueryRow(context.Background(), SelectFromEncodersTable, encoderId).Scan(&dbEncoderId)
+	err := dbConn.QueryRow(ctx, SelectFromEncodersTable, encoderId).Scan(&dbEncoderId)
 	if err != nil {
 		// encoder doesn't exist in database
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -51,13 +55,17 @@ func getAllEncoderMetrics(c *gin.Context) {
 			return
 		}
 
-		log.Fatalf("failed to query database for encoder: %v", err)
+		log.Printf("failed to query database for encoder: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
 	}
 
 	// retrieve all metric rows with id 'encoderId'
-	metricRows, err := dbConn.Query(context.Background(), selectAllMetricsFromEncoderId, dbEncoderId)
+	metricRows, err := dbConn.Query(ctx, selectAllMetricsFromEncoderId, dbEncoderId)
 	if err != nil {
-		log.Fatalf("failed to retrieve metric rows: %v", err)
+		log.Printf("failed to retrieve metric rows: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
 	}
 
 	defer metricRows.Close()
@@ -65,7 +73,9 @@ func getAllEncoderMetrics(c *gin.Context) {
 	// collect metricRows into slice of Metric
 	metrics, err := pgx.CollectRows(metricRows, pgx.RowToStructByPos[Metric])
 	if err != nil {
-		log.Fatalf("failed to collect metrics into rows: %v", err)
+		log.Printf("failed to collect metrics into rows: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -78,9 +88,11 @@ func getAllEncoders(c *gin.Context) {
 	dbConn := GetDB()
 
 	// retrieve all encoder rows
-	encoderRows, err := dbConn.Query(context.Background(), selectAllFromEncodersTable)
+	encoderRows, err := dbConn.Query(c.Request.Context(), selectAllFromEncodersTable)
 	if err != nil {
-		log.Fatalf("failed to select all from encoders table: %v", err)
+		log.Printf("failed to select all from encoders table: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
 	}
 
 	defer encoderRows.Close()
@@ -88,7 +100,9 @@ func getAllEncoders(c *gin.Context) {
 	// collect encoder rows into slice of Encoder
 	encoders, err := pgx.CollectRows(encoderRows, pgx.RowToStructByPos[Encoder])
 	if err != nil {
-		log.Fatalf("failed to collect encoders into rows: %v", err)
+		log.Printf("failed to collect encoders into rows: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
