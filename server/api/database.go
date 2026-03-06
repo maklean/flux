@@ -48,7 +48,7 @@ func connectDatabase() *pgxpool.Pool {
 	return dbConn
 }
 
-// GetDB pings the database and returns the connection instance if it's still alive.
+// GetDB returns the connection instance.
 func GetDB() *pgxpool.Pool {
 	if dbConn == nil {
 		log.Fatalf("database is not initialized")
