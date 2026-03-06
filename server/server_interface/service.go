@@ -21,11 +21,11 @@ func (telemetryService) RecordMetrics(ctx context.Context, tr *pb.TelemetryReque
 
 	// insert into encoders table if needed
 	var encoderId string
-	err := dbConn.QueryRow(context.Background(), api.SelectFromEncodersTable, tr.EncoderId).Scan(&encoderId)
+	err := dbConn.QueryRow(ctx, api.SelectFromEncodersTable, tr.EncoderId).Scan(&encoderId)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			_, err = dbConn.Exec(context.Background(), api.InsertIntoEncodersTable, tr.EncoderId)
+			_, err = dbConn.Exec(ctx, api.InsertIntoEncodersTable, tr.EncoderId)
 
 			if err != nil {
 				log.Fatalf("failed to insert into encoders table: %v", err)
@@ -38,7 +38,7 @@ func (telemetryService) RecordMetrics(ctx context.Context, tr *pb.TelemetryReque
 	// insert metric into metrics table
 	timestamp := time.Unix(int64(tr.Timestamp), 0) // need to convert to insert a value with a type of TIMESTAMP on the db
 
-	_, err = dbConn.Exec(context.Background(), api.InsertIntoMetricsTable, tr.BitrateMbps, tr.Temperature, tr.DroppedFrames, timestamp, tr.EncoderId)
+	_, err = dbConn.Exec(ctx, api.InsertIntoMetricsTable, tr.BitrateMbps, tr.Temperature, tr.DroppedFrames, timestamp, tr.EncoderId)
 
 	if err != nil {
 		log.Fatalf("failed to insert into metrics table: %v", err)

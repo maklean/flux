@@ -15,6 +15,7 @@ func StartAPIServer() {
 	// Connect to database
 	conn := connectDatabase()
 	defer conn.Close(context.Background())
+
 	log.Println("Connected to database successfully...")
 
 	gin.SetMode(gin.ReleaseMode)

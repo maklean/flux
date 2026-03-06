@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -18,38 +19,40 @@ func connectDatabase() *pgx.Conn {
 
 	var err error
 
-	// TODO: probably don't use context.Background(), make global app context for DB queries.
-	dbConn, err = pgx.Connect(context.Background(), getDatabaseURL())
+	// wait for a total of 10s for setup
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	dbConn, err = pgx.Connect(ctx, getDatabaseURL())
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	// initialize tables
-	_, err = dbConn.Exec(context.Background(), q_CreateEncodersTable)
-	if err != nil {
-		log.Fatalf("failed to create encoders table: %v", err)
+	execQuery := func(query, operation string) {
+		_, err := dbConn.Exec(ctx, query)
+		if err != nil {
+			log.Fatalf("failed to %s: %v", operation, err)
+		}
 	}
 
-	_, err = dbConn.Exec(context.Background(), q_CreateMetricsTable)
-	if err != nil {
-		log.Fatalf("failed to create metrics table: %v", err)
-	}
-
-	_, err = dbConn.Exec(context.Background(), idx_EncoderId_MetricsTable)
-	if err != nil {
-		log.Fatalf("failed to encoder_id index for metrics table: %v", err)
-	}
+	// run DB setup queries
+	execQuery(q_CreateEncodersTable, "create encoders table")
+	execQuery(q_CreateMetricsTable, "create metrics table")
+	execQuery(idx_EncoderId_MetricsTable, "create encoder_id index for metrics table")
 
 	return dbConn
 }
 
-// GetDB pings the database and returns the connection instance if it's still alive.
+// GetDB pings the database (waits 5s) and returns the connection instance if it's still alive.
 func GetDB() *pgx.Conn {
 	if dbConn == nil {
 		log.Fatalf("database is not initialized")
 	}
 
-	if err := dbConn.Ping(context.Background()); err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	if err := dbConn.Ping(ctx); err != nil {
 		log.Fatalf("loss connection to the database: %v", err)
 	}
 
