@@ -6,13 +6,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var dbConn *pgx.Conn = nil
+var dbConn *pgxpool.Pool = nil
 
 // connectDatabase connects to a PostgreSQL database and returns the connection instance
-func connectDatabase() *pgx.Conn {
+func connectDatabase() *pgxpool.Pool {
 	if dbConn != nil {
 		log.Panicln("cannot connect to database more than once")
 	}
@@ -23,9 +23,14 @@ func connectDatabase() *pgx.Conn {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	dbConn, err = pgx.Connect(ctx, getDatabaseURL())
+	dbConn, err = pgxpool.New(ctx, getDatabaseURL())
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
+	}
+
+	// pgxpool.New() only configures the pool, and doesn't verify the connection
+	if err = dbConn.Ping(ctx); err != nil {
+		log.Fatalf("failed to reach database: %v", err)
 	}
 
 	execQuery := func(query, operation string) {
@@ -44,7 +49,7 @@ func connectDatabase() *pgx.Conn {
 }
 
 // GetDB pings the database (waits 5s) and returns the connection instance if it's still alive.
-func GetDB() *pgx.Conn {
+func GetDB() *pgxpool.Pool {
 	if dbConn == nil {
 		log.Fatalf("database is not initialized")
 	}
