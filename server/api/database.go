@@ -48,17 +48,10 @@ func connectDatabase() *pgxpool.Pool {
 	return dbConn
 }
 
-// GetDB pings the database (waits 5s) and returns the connection instance if it's still alive.
+// GetDB pings the database and returns the connection instance if it's still alive.
 func GetDB() *pgxpool.Pool {
 	if dbConn == nil {
 		log.Fatalf("database is not initialized")
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	if err := dbConn.Ping(ctx); err != nil {
-		log.Fatalf("loss connection to the database: %v", err)
 	}
 
 	return dbConn

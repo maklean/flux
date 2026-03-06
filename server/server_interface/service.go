@@ -28,10 +28,12 @@ func (telemetryService) RecordMetrics(ctx context.Context, tr *pb.TelemetryReque
 			_, err = dbConn.Exec(ctx, api.InsertIntoEncodersTable, tr.EncoderId)
 
 			if err != nil {
-				log.Fatalf("failed to insert into encoders table: %v", err)
+				log.Printf("failed to insert into encoders table: %v", err)
+				return nil, errors.New("internal server error")
 			}
 		} else {
-			log.Fatalf("failed to query row: %v", err)
+			log.Printf("failed to query row: %v", err)
+			return nil, errors.New("internal server error")
 		}
 	}
 
@@ -41,7 +43,8 @@ func (telemetryService) RecordMetrics(ctx context.Context, tr *pb.TelemetryReque
 	_, err = dbConn.Exec(ctx, api.InsertIntoMetricsTable, tr.BitrateMbps, tr.Temperature, tr.DroppedFrames, timestamp, tr.EncoderId)
 
 	if err != nil {
-		log.Fatalf("failed to insert into metrics table: %v", err)
+		log.Printf("failed to insert into metrics table: %v", err)
+		return nil, errors.New("internal server error")
 	}
 
 	return &pb.TelemetryResponse{
